@@ -27,14 +27,13 @@ class Game: ObservableObject {
             return
         }
         let player = getNextPlayer()
-        let gameEnded = apply(move: move, for: player, winStatus: .won)
-        if gameEnded {
-            return
-        }
-        makeBotMove()
+        apply(move: move, for: player, winStatus: .won)
     }
 
     func makeBotMove() {
+        guard status == .inprogress else {
+            return
+        }
         let player = getNextPlayer()
         let move = player.makeMove(board: board)
         apply(move: move, for: player, winStatus: .lost)

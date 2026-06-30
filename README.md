@@ -8,9 +8,9 @@ A **protocol-oriented SwiftUI reference** for building a small game where the ru
 
 ## Screenshots
 
-| Start screen | Gameplay | Result |
-|:---:|:---:|:---:|
-| ![Start screen](docs/screenshots/start.png) | ![Gameplay](docs/screenshots/gameplay.png) | ![Result](docs/screenshots/result.png) |
+| Start screen | You win | You lose | Draw |
+|:---:|:---:|:---:|:---:|
+| ![Start screen](docs/screenshots/start.png) | ![Win](docs/screenshots/win.png) | ![Lose](docs/screenshots/lost.png) | ![Draw](docs/screenshots/draw.png) |
 
 ---
 
@@ -43,6 +43,18 @@ StartTheGame → TicTacToe (View) → TicTacToeViewModel → Game → Board / Bo
 
 ---
 
+## Bot difficulty
+
+Each difficulty is a separate `PlayingStrategy` implementation:
+
+| Level | Behavior |
+|-------|----------|
+| **Easy** | Picks a random available cell. |
+| **Medium** | Takes an immediate winning move if available, otherwise blocks the opponent's winning move, otherwise plays randomly. |
+| **Hard** | Plays optimally using the **minimax** algorithm — effectively unbeatable. |
+
+---
+
 ## Project layout
 
 ```
@@ -64,11 +76,12 @@ TicTacToe/
 │   └── User.swift
 ├── Strategies/       Bot move strategies
 │   ├── PlayingStrategy.swift         Strategy protocol
-│   └── RandomPlayingStrategy.swift   Easy / Medium / Hard strategies
+│   └── RandomPlayingStrategy.swift   Easy (random) / Medium (win-block) / Hard (minimax)
 ├── TicTacToeView/    Game screen
-│   ├── TicTacToe.swift               Board UI
+│   ├── TicTacToeView.swift           Board UI
 │   └── TicTacToeViewModel.swift      View ↔ game bridge
-└── Extensions/       SwiftUI helpers
+├── Extensions/       SwiftUI helpers
+└── Utilities/        SoundPlayer (system sound effects)
 ```
 
 **`Models` vs `Strategies`:** `Models` holds shared rules and does **not** change when you add a new bot behavior. New AI behavior lives in `Strategies` and is selected in `BotPlayer` only.
@@ -105,6 +118,32 @@ Do not edit `Game`, `Board`, or the views.
 3. Enter your details → pick a symbol & level → **Enter the game**
 
 **Requires:** Xcode 15.1+, iOS 17.2+
+
+---
+
+## Related LeetCode problems
+
+The game decomposes into classic algorithm problems. No single problem matches
+the whole app, but these map directly to its parts.
+
+**Board & win detection** (like `Game.checkWinner` / `isWinner`)
+
+| # | Problem | Relevance |
+|---|---------|-----------|
+| 1275 | Find Winner on a Tic-Tac-Toe Game | Almost identical win-detection logic |
+| 794 | Valid Tic-Tac-Toe State | Validating a board configuration |
+| 348 | Design Tic-Tac-Toe (Premium) | Efficient O(1) per-move win tracking |
+
+**Optimal play / minimax** (like `HardPlayingStrategy`)
+
+| # | Problem | Relevance |
+|---|---------|-----------|
+| 464 | Can I Win | Minimax + memoization — closest algorithmic twin |
+| 486 | Predict the Winner | Minimax over a range, optimal play |
+| 294 | Flip Game II | Minimax with memoization (recurse + undo) |
+| 375 | Guess Number Higher or Lower II | Minimax framed as minimizing worst-case cost |
+| 877 | Stone Game | Two players play optimally (minimax / DP) |
+| 913 | Cat and Mouse (Hard) | Minimax / game theory on a graph |
 
 ---
 

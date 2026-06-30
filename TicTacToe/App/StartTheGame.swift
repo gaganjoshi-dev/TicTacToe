@@ -8,27 +8,29 @@
 import SwiftUI
 
 struct StartTheGame: View {
-
+    
     @State private var userName: String = ""
     @State private var email: String = ""
     @State private var symbol: GameSymbol = .XMark
     @State private var botSymbol: GameSymbol = .OMark
     @State private var selectedLevel: BotLevel = .easy
-
+    
+    private var isNameValid: Bool {
+        !userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     var body: some View {
-
         NavigationStack {
-
             Form {
-                HStack(spacing: 10) {
-                    Image(systemName: "person")
-                        .resizable().frame(width: 80, height: 80)
-                    VStack(spacing: 10) {
-                        TextField("Enter Name: ", text: $userName).textFieldStyle(.roundedBorder)
-                        TextField("Enter Email: ", text: $email).textFieldStyle(.roundedBorder)
-                    }
+                VStack(spacing: 10) {
+                    TextField("Enter Name: ", text: $userName)
+                        .textFieldStyle(.roundedBorder)
+                        .autocorrectionDisabled()
+                    TextField("Enter Email (optional): ", text: $email)
+                        .textFieldStyle(.roundedBorder)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
                 }
-
                 Section(header: Text("Select your symbol")) {
                     Picker("Select", selection: $symbol) {
                         GameSymbol.XMark.image()
@@ -49,27 +51,21 @@ struct StartTheGame: View {
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
-
                 Section {
-
                     NavigationLink {
-
                         let user = User(name: userName, email: email)
                         let humanPlayer = HumanPlayer(symbol: symbol, user: user)
                         let botPlayer = BotPlayer(symbol: botSymbol, level: selectedLevel)
-                        // goTicTacToe()
-                        TicTacToe(players: [humanPlayer, botPlayer])
-
+                        TicTacToeView(players: [humanPlayer, botPlayer])
                     } label: {
                         Text("Enter the game")
-                    }.centerHorizontally()
-
+                    }
+                    .centerHorizontally()
+                    .disabled(!isNameValid)
                 }
             }
             .navigationTitle("Start Game")
-
         }
-
     }
 }
 

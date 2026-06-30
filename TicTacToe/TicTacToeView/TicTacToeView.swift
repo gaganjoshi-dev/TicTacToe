@@ -1,5 +1,5 @@
 //
-//  TicTacToe.swift
+//  TicTacToeView.swift
 //  TicTacToe
 //
 //  Created by gagan joshi on 2024-01-02.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TicTacToe: View {
+struct TicTacToeView: View {
     @State private var viewModel: TicTacToeViewModel
     let boardSize: Int = 3
     var players: [Player]
@@ -53,6 +53,7 @@ struct TicTacToe: View {
                                 ZStack {
                                     if let symbol {
                                         symbol.image()
+                                            .transition(.scale.combined(with: .opacity))
                                     }
                                     Image(systemName: "square")
                                         .resizable()
@@ -72,20 +73,26 @@ struct TicTacToe: View {
                         }
                         
                     }
+                    .disabled(viewModel.isBotThinking)
+                    .opacity(viewModel.isBotThinking ? 0.6 : 1.0)
+                    .animation(.easeInOut, value: viewModel.isBotThinking)
                 }
                 Section {
-                    
-                    Text(viewModel.statusLabel)
-                        .centerHorizontally()
-                    
-                    Button("New Game") {
-                        resetGame()
+                    Text(viewModel.statusLabel).centerHorizontally()
+                }
+                if viewModel.game.status != .inprogress {
+                    Section {
+                        Button("New Game") {
+                            resetGame()
+                        }.centerHorizontally()
                     }
-                    .centerHorizontally()
                 }
             }
             .navigationTitle("Tic Tac Toe")
             .navigationBarTitleDisplayMode(.inline)
+            .onDisappear {
+                resetGame()
+            }
         }
     }
     
@@ -129,5 +136,5 @@ struct FadingTextView: View {
 }
 
 #Preview {
-    TicTacToe(players: [])
+    TicTacToeView(players: [])
 }
