@@ -30,9 +30,7 @@ class BotPlayer: Player {
             self.strategy = MediumPlayingStrategy()
         case .hard:
             self.strategy = HardPlayingStrategy()
-
         }
-
     }
 
     func makeMove(board: Board) -> Move {

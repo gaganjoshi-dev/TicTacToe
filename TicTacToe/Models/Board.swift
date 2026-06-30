@@ -14,7 +14,6 @@ class Board {
     var size: Int
 
     init(size boardSize: Int) {
-
         var tempCells = [[BoardCell]]()
         size = boardSize
         for row in 0..<boardSize {
@@ -25,26 +24,20 @@ class Board {
             tempCells.append(cell)
         }
         self.cells = tempCells
-
     }
 
     func isEmpty(row: Int, column: Int) -> Bool {
         return cells[row][column].symbol == nil
-
     }
 
     func getAvailableCells() -> [BoardCell] {
-
         var availableCells = [BoardCell]()
-
         for cellRow in cells {
             for cell in cellRow where cell.symbol == nil {
-                    availableCells.append(cell)
+                availableCells.append(cell)
             }
         }
-
         return availableCells
-
     }
 
 }

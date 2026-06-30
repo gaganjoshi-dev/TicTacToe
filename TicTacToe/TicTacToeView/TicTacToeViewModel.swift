@@ -14,10 +14,6 @@ class TicTacToeViewModel: ObservableObject {
     var game: Game
     var statusLabel: String = GameStatus.inprogress.rawValue
 
-    var boardSize: Int {
-        return game.board.size
-    }
-
     init(game: Game) {
         self.game = game
     }
@@ -26,7 +22,7 @@ class TicTacToeViewModel: ObservableObject {
         self.game = game
         statusLabel = GameStatus.inprogress.rawValue
     }
-    
+
     func onTapOfBoard(row: Int, column: Int) {
         print("row = \(row)", "column = \(column)")
         game.makeMove(move: Move(row: row, column: column))

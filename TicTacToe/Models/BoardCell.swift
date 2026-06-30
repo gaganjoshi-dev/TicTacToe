@@ -1,5 +1,5 @@
 //
-//  Cell.swift
+//  BoardCell.swift
 //  TicTacToe
 //
 //  Created by gagan joshi on 2024-01-02.
@@ -8,7 +8,6 @@
 import Foundation
 
 class BoardCell {
-
     var row: Int
     var column: Int
     var symbol: GameSymbol?
