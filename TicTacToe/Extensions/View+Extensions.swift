@@ -16,6 +16,7 @@ extension View {
             Spacer()
         }
     }
+
     @ViewBuilder
     func visible(_ value: Bool) -> some View {
         // you can use if-else also

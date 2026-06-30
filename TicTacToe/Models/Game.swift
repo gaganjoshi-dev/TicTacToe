@@ -8,7 +8,6 @@
 import Foundation
 
 @Observable
-
 class Game: ObservableObject {
 
     var board: Board
@@ -17,6 +16,7 @@ class Game: ObservableObject {
     var status: GameStatus = .inprogress
     var winner: Player?
     var statusLabel: String = ""
+
     init(board: Board, players: [Player]) {
         self.board = board
         self.players = players
@@ -27,52 +27,39 @@ class Game: ObservableObject {
             return
         }
         let player = getNextPlayer()
-        board.cells[move.row][move.column] = BoardCell(row: move.row, column: move.column, symbol: player.symbol)
-        // check the winner
-        if checkWinner(player: player) {
-            status = GameStatus.won
-            statusLabel = status.rawValue
-            winner = player
+        let gameEnded = apply(move: move, for: player, winStatus: .won)
+        if gameEnded {
             return
         }
-        // check the draw
-        if checkDraw(player: player) {
-            status = GameStatus.draw
-            statusLabel = status.rawValue
-            return
-        }
-        nextPlayerIndex = (nextPlayerIndex + 1) % players.count
         makeBotMove()
     }
 
     func makeBotMove() {
-        // Get the next player
         let player = getNextPlayer()
-        // Got the next move
         let move = player.makeMove(board: board)
-        // Validate the move
-        if !board.isEmpty(row: move.row, column: move.column) {
-
-        }
-        board.cells[move.row][move.column] = BoardCell(row: move.row, column: move.column, symbol: player.symbol)
-        // check the winner
-        if checkWinner(player: player) {
-            status = GameStatus.lost
-            statusLabel = status.rawValue
-            winner = player
-            return
-        }
-        // check the draw
-        if checkDraw(player: player) {
-            status = GameStatus.draw
-            statusLabel = status.rawValue
-            return
-        }
-        // update the board
-        nextPlayerIndex = (nextPlayerIndex + 1) % players.count
+        apply(move: move, for: player, winStatus: .lost)
     }
 
-   
+    @discardableResult
+    private func apply(move: Move, for player: Player, winStatus: GameStatus) -> Bool {
+        board.cells[move.row][move.column] = BoardCell(row: move.row, column: move.column, symbol: player.symbol)
+        if checkWinner(player: player) {
+            finish(status: winStatus, winner: player)
+            return true
+        }
+        if checkDraw(player: player) {
+            finish(status: .draw, winner: nil)
+            return true
+        }
+        nextPlayerIndex = (nextPlayerIndex + 1) % players.count
+        return false
+    }
+
+    private func finish(status: GameStatus, winner: Player?) {
+        self.status = status
+        self.statusLabel = status.rawValue
+        self.winner = winner
+    }
 
     func checkWinner(player: Player) -> Bool {
         let symbol = player.symbol

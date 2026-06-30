@@ -9,7 +9,6 @@ import Foundation
 
 class HumanPlayer: Player {
     var symbol: GameSymbol
-
     var user: User
 
     init(symbol: GameSymbol, user: User) {
@@ -20,5 +19,4 @@ class HumanPlayer: Player {
     func makeMove(board: Board) -> Move {
         return Move(row: 0, column: 0)
     }
-
 }

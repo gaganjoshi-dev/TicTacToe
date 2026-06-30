@@ -7,15 +7,12 @@
 
 import SwiftUI
 
-
-
 struct StartTheGame: View {
 
     @State private var userName: String = ""
     @State private var email: String = ""
     @State private var symbol: GameSymbol = .XMark
     @State private var botSymbol: GameSymbol = .OMark
-    @State private var boardSize: Int = 3
     @State private var selectedLevel: BotLevel = .easy
 
     var body: some View {
@@ -45,25 +42,23 @@ struct StartTheGame: View {
                     })
                 }
                 Section(header: Text("Choose Game Level")) {
-
-                        Picker("Choose Game Level", selection: $selectedLevel) {
-                            ForEach(BotLevel.allCases, id: \.self) { level in
-                                Text(level.rawValue).tag(level)
-                            }
+                    Picker("Choose Game Level", selection: $selectedLevel) {
+                        ForEach(BotLevel.allCases, id: \.self) { level in
+                            Text(level.rawValue).tag(level)
                         }
-                        .pickerStyle(SegmentedPickerStyle())
-
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
                 }
 
                 Section {
 
                     NavigationLink {
 
-                        let user = User(name: userName, email: email, image: "")
+                        let user = User(name: userName, email: email)
                         let humanPlayer = HumanPlayer(symbol: symbol, user: user)
                         let botPlayer = BotPlayer(symbol: botSymbol, level: selectedLevel)
                         // goTicTacToe()
-                        TicTacToe(players: [humanPlayer, botPlayer], boardSize: boardSize)
+                        TicTacToe(players: [humanPlayer, botPlayer])
 
                     } label: {
                         Text("Enter the game")

@@ -8,98 +8,115 @@
 import SwiftUI
 
 struct TicTacToe: View {
-
-    @ObservedObject private var viewModel: TicTacToeViewModel
-    @State var playerName: String
-    @State var board: Board
-    let boardSize: Int
+    @State private var viewModel: TicTacToeViewModel
+    let boardSize: Int = 3
     var players: [Player]
-    init(players: [Player], boardSize: Int) {
-        let board: Board = Board(size: boardSize)
+    
+    private var playerName: String {
+        (players.first as? HumanPlayer)?.user.name ?? "User"
+    }
+    
+    init(players: [Player]) {
+        let board = Board(size: boardSize)
         let game = Game(board: board, players: players)
         self.players = players
-        self.boardSize = boardSize
         self.viewModel = TicTacToeViewModel(game: game)
-        self.board = board
-        playerName = (players[0] as? HumanPlayer)?.user.name ?? "User"
     }
-
+    
     var body: some View {
-
         NavigationStack {
-
             Form {
                 Section {
-                    HStack(spacing: 20) {
-                        let symbol = viewModel.game.players[0].symbol
-                        symbol.image()
-                            .frame(width: 30, height: 30)
-                        Text(playerName)
-                            .foregroundStyle(symbol.color())
-
-                    }
-                    HStack(spacing: 20) {
-                        let symbol = viewModel.game.players[1].symbol
-                        symbol.image()
-                            .frame(width: 30, height: 30)
-                        Text("Bot")
-                            .foregroundStyle(symbol.color())
-                    }
+                    PlayerRow(
+                        symbol: viewModel.game.players[0].symbol,
+                        name: playerName
+                    )
+                    PlayerRow(
+                        symbol: viewModel.game.players[1].symbol,
+                        name: "Bot"
+                    )
                 }
                 Section {
-
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: boardSize)) {
-                        ForEach(0..<boardSize) { row in
-                            ForEach(0..<boardSize) { column in
+                    
+                    LazyVGrid(
+                        columns: Array(
+                            repeating: GridItem(.flexible()),
+                            count: boardSize
+                        )
+                    ) {
+                        ForEach(0..<3) { row in
+                            ForEach(0..<3) { column in
+                                let symbol = viewModel.hasImageOnElement(
+                                    row: row,
+                                    column: column
+                                )
                                 ZStack {
-                                    if let symbol = viewModel.hasImageOnElement(row: row, column: column) {
+                                    if let symbol {
                                         symbol.image()
-                                        Image(systemName: "square").resizable().font(.largeTitle).frame(height: 100)
-                                    } else {
-                                        Image(systemName: "square").resizable().font(.largeTitle).frame(height: 100)
-                                            .onTapGesture {
-                                                viewModel.onTapOfBoard(row: row, column: column)
-                                            }
+                                    }
+                                    Image(systemName: "square")
+                                        .resizable()
+                                        .font(.largeTitle)
+                                        .frame(height: 100)
+                                }
+                                .onTapGesture {
+                                    if symbol == nil {
+                                        viewModel
+                                            .onTapOfBoard(
+                                                row: row,
+                                                column: column
+                                            )
                                     }
                                 }
                             }
                         }
-
+                        
                     }
-
                 }
                 Section {
-
+                    
                     Text(viewModel.statusLabel)
                         .centerHorizontally()
+                    
+                    Button("New Game") {
+                        resetGame()
+                    }
+                    .centerHorizontally()
                 }
             }
             .navigationTitle("Tic Tac Toe")
             .navigationBarTitleDisplayMode(.inline)
-            .task {
-                resetGame()
-            }
         }
     }
-
-     func resetGame() {
-
-        let board: Board = Board(size: boardSize)
+    
+    func resetGame() {
+        let board = Board(size: boardSize)
         let game = Game(board: board, players: players)
-
-         self.viewModel.resetViewModel(game: game)
-
-         self.board = board
-
-         playerName = (players[0] as? HumanPlayer)?.user.name ?? "User"
-
+        viewModel.resetViewModel(game: game)
     }
-
+    
+    
+    
 }
+
+struct PlayerRow: View {
+    var symbol: GameSymbol
+    var name: String
+    
+    var body: some View {
+        HStack(spacing: 20) {
+            symbol.image()
+                .frame(width: 30, height: 30)
+            Text(name)
+                .foregroundStyle(symbol.color())
+        }
+    }
+}
+
 
 struct FadingTextView: View {
     @State private var isFadedOut = false
-
+    
     var body: some View {
         Text("Your turn")
             .opacity(isFadedOut ? 0.2 : 1.0)
@@ -107,30 +124,10 @@ struct FadingTextView: View {
             .onAppear(perform: {
                 isFadedOut.toggle()
             })
-
+        
     }
 }
 
 #Preview {
-    TicTacToe(players: [], boardSize: 4)
-
-}
-
-struct ElementCell: View, TableRowContent {
-    var tableRowBody: Never
-
-    typealias TableRowBody = Never
-
-    let size: Int
-    var symbol: GameSymbol?
-
-    var body: some View {
-        ZStack {
-            if let symbol {
-                symbol.image()
-            }
-            Image(systemName: "square").resizable().font(.largeTitle).frame(height: 100)
-
-        }
-    }
+    TicTacToe(players: [])
 }

@@ -1,5 +1,5 @@
 //
-//  Symbol.swift
+//  GameSymbol.swift
 //  TicTacToe
 //
 //  Created by gagan joshi on 2024-01-02.
@@ -15,30 +15,31 @@ enum GameSymbol: String {
     func image() -> some View {
         switch self {
         case .XMark:
-            return  Image(systemName: "x.square")
-                      .resizable()
-                      .foregroundColor(.blue)
+            return Image(systemName: "x.square")
+                .resizable()
+                .foregroundColor(.blue)
         case .OMark:
-            return  Image(systemName: "circle.square")
-                      .resizable()
-                      .foregroundColor(.pink)
+            return Image(systemName: "circle.square")
+                .resizable()
+                .foregroundColor(.pink)
         }
     }
 
     func color() -> Color {
         switch self {
         case .XMark:
-            return  .blue
+            return .blue
         case .OMark:
-            return  .pink
+            return .pink
         }
     }
+
     func toggle() -> GameSymbol {
         switch self {
         case .XMark:
-            return  .OMark
+            return .OMark
         case .OMark:
-            return  .XMark
+            return .XMark
         }
     }
 
