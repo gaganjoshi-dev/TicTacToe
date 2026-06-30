@@ -40,4 +40,10 @@ class Board {
         return availableCells
     }
 
+    /// A lightweight value-type snapshot of the board used by bot strategies
+    /// to simulate moves without mutating the live board.
+    func symbolGrid() -> [[GameSymbol?]] {
+        return cells.map { row in row.map { $0.symbol } }
+    }
+
 }
